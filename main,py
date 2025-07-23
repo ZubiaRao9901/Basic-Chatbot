@@ -1,0 +1,94 @@
+#basic  chat bot 
+
+import tkinter as tk
+from tkinter import scrolledtext
+import datetime
+import random
+
+# Knowledge base
+knowledge_base = {
+    "hello": ["Hi there! 👋", "Hey! How can I assist you today?", "Hello! 😊"],
+    "hi": ["Hello! 👋", "Hi! What's up?", "Hey there! 😄"],
+    "how are you": ["I'm just code, but I’m doing awesome! How about you? 🤖"],
+    "what is your name": ["I'm CodeAlphaBot – your smart assistant 💡"],
+    "who created you": ["I was created by Python interns at CodeAlpha 💻"],
+    "bye": ["Goodbye! Talk to you soon 👋", "See you later! Stay safe 😊"],
+    "thank you": ["You're welcome! Always happy to help 🌟"],
+    "time": [f"The current time is {datetime.datetime.now().strftime('%H:%M:%S')} 🕒"],
+    "date": [f"Today's date is {datetime.datetime.now().strftime('%A, %B %d, %Y')} 📅"],
+    "what is python": ["Python is a beginner-friendly programming language used in web dev, AI, data science, and more! 🐍"],
+    "what can you do": ["I can chat, share knowledge, tell the time/date, and more! Try asking anything or type 'help'."]
+}
+
+# Fallbacks
+fallback_responses = [
+    "Hmm... I’m not sure about that. Try asking something else! 🤔",
+    "Sorry, I didn’t catch that. Can you rephrase it?",
+    "You can type 'help' to see what I can do 🧠"
+]
+
+# Help Menu
+def show_help():
+    return (
+        "🆘 Help Menu:\n"
+        "- Say 'hello', 'hi', 'how are you'\n"
+        "- Ask 'what is Python', 'who created you'\n"
+        "- Ask for 'time' or 'date'\n"
+        "- Type 'bye' to exit"
+    )
+
+# Bot logic
+def get_response(user_input):
+    user_input = user_input.lower().strip()
+    if user_input == "help":
+        return show_help()
+
+    for key in knowledge_base:
+        if key in user_input:
+            return random.choice(knowledge_base[key])
+
+    return random.choice(fallback_responses)
+
+# GUI Functionality
+def send_message():
+    user_input = entry.get()
+    if not user_input.strip():
+        return
+
+    chat_window.config(state='normal')
+    chat_window.insert(tk.END, "You: " + user_input + "\n", "user")
+
+    response = get_response(user_input)
+    chat_window.insert(tk.END, "Bot: " + response + "\n", "bot")
+    chat_window.config(state='disabled')
+    entry.delete(0, tk.END)
+    chat_window.see(tk.END)
+
+# Main GUI Setup
+root = tk.Tk()
+root.title("CodeAlpha ChatBot (GUI)")
+root.geometry("500x550")
+root.configure(bg="#f0f0f0")
+
+# Chat area
+chat_window = scrolledtext.ScrolledText(root, state='disabled', wrap=tk.WORD, bg="#ffffff", font=("Segoe UI", 11))
+chat_window.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+chat_window.tag_config("user", foreground="blue")
+chat_window.tag_config("bot", foreground="green")
+
+# Input field
+entry_frame = tk.Frame(root, bg="#f0f0f0")
+entry_frame.pack(fill=tk.X, padx=10, pady=5)
+
+entry = tk.Entry(entry_frame, font=("Segoe UI", 12))
+entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10), ipady=6)
+
+send_btn = tk.Button(entry_frame, text="Send", command=send_message, font=("Segoe UI", 11, "bold"), bg="#4CAF50", fg="white", padx=20)
+send_btn.pack(side=tk.RIGHT)
+
+# Start message
+chat_window.config(state='normal')
+chat_window.insert(tk.END, "🤖 CodeAlphaBot: Hello! Type 'help' to get started or say something.\n\n", "bot")
+chat_window.config(state='disabled')
+
+root.mainloop()
